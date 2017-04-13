@@ -14,3 +14,19 @@ function salesforce_pull_uninstall() {
     ->condition('name', 'salesforce_pull%', 'LIKE')
     ->execute();
 }
+
+/**
+ * Add mapping name to pending queue items.
+ */
+function salesforce_pull_update_7000() {
+  $result = db_query("SELECT data, item_id FROM {queue} q WHERE name = :name ORDER BY created, item_id ASC", array(':name' => SALESFORCE_PULL_QUEUE));
+
+  while ($row = $result->fetchObject()) {
+    $data = unserialize($row->data);
+    $data['update'] = $data;
+    db_query("update queue set data = :data where item_id = :item_id", array(
+      ':item_id' => $row->item_id,
+      ':data' => serialize($data),
+    ));
+  }
+}
