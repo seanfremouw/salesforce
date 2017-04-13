@@ -309,6 +309,22 @@ function salesforce_pull_get_pull_query($type) {
 }
 
 /**
+ * Run a salesforce pull update for a single record.
+ *
+ * @param string $type
+ *   Salesforce object type.
+ * @param string $salesforce_id
+ *   Salesforce ID.
+ */
+function salesforce_pull_update_record($type, $salesforce_id) {
+  $soql = salesforce_pull_get_pull_query($type);
+  $soql->addCondition('Id', "'$salesforce_id'");
+  $result = salesforce_get_api()->query($soql);
+  $sf_object = !isset($result['errorCode']) ? reset($result['records']) : FALSE;
+  return salesforce_pull_process_updated_record($sf_object);
+}
+
+/**
  * Process records in the queue.
  */
 function salesforce_pull_process_queue_item($sf_object) {
