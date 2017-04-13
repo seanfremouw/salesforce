@@ -103,7 +103,7 @@ function salesforce_pull() {
  */
 function salesforce_cron_queue_info() {
   $queues[SALESFORCE_PULL_QUEUE] = array(
-    'worker callback' => 'salesforce_pull_process_updated_records',
+    'worker callback' => 'salesforce_pull_process_queue_item',
     // Set to a high max timeout in case pulling in lots of data from SF.
     'time' => 180,
   );
@@ -311,7 +311,7 @@ function salesforce_pull_get_pull_query($type) {
 /**
  * Process records in the queue.
  */
-function salesforce_pull_process_updated_records($sf_object) {
+function salesforce_pull_process_queue_item($sf_object) {
   if (isset($sf_object['delete'])) {
     salesforce_pull_process_deleted_records($sf_object['delete']);
   }
