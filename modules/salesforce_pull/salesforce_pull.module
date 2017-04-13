@@ -743,6 +743,10 @@ function salesforce_pull_process_deleted_records($sf_object) {
  * Get all the merged records since the last delete.
  */
 function salesforce_pull_check_merged_records() {
+  $objInfo = salesforce_get_api()->objects(array('name' => 'Merged_Contact__c'));
+  if (empty($objInfo)) {
+    return array('records' => array());
+  }
   $merge_fields = array(
     'type' => 'Merged_Contact__c',
     'merged_contact' => 'Contact__c',
